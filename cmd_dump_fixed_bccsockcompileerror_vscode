@@ -1,0 +1,200 @@
+  815  cd Downloads/
+  816  s
+  817  ls
+  818  cd PathCoverage-NaturalSym/
+  819  ls
+  820  cd seed/
+  821  ls
+  822  cd _gpt/
+  823  ls
+  824  cd ..
+  825  ls
+  826  cd distanalysis/
+  827  s
+  828  ls
+  829  code .
+  830  wc -l ../PathCoverage-NaturalSym/seed/_gpt/*/*.csv
+  831  #python3 dist-analysis.py ../PathCoverage-NaturalSym/seed/{_gpt,}/Q15/catalog_sales.csv
+  832  ls
+  833  cd ../PathCoverage-NaturalSym/seed/
+  834  cd -
+  835  ls ../PathCoverage-NaturalSym/seed/
+  836  python3 dist-analysis.py ../PathCoverage-NaturalSym/seed/{_gpt,_naturalsym}/Q15/catalog_sales.csv
+  837  python3 dist-analysis.py ../PathCoverage-NaturalSym/seed/{_gpt,_naturalsym}/Q15/catalog_sales.csv freq_graphs
+  838  rm -rf freq_graphs/
+  839  python3 dist-analysis.py ../PathCoverage-NaturalSym/seed/{_gpt,_naturalsym}/Q15/catalog_sales.csv freq_graphs
+  840  xdg-open freq_graphs/Q15_cs_coupon_amt.svg 
+  841  python3 dist-analysis.py ../PathCoverage-NaturalSym/seed/{_gpt,_naturalsym}/Q15/catalog_sales.csv freq_graphs_png
+  842  ls ../PathCoverage-NaturalSym/seed/_gpt/Q15/
+  843  python3 dist-analysis.py ../PathCoverage-NaturalSym/seed/{_gpt,_naturalsym}/Q15/customer_address.csv freq_graphs_ca
+  844  xdg-open freq_graphs_ca/Q15_ca_gmt_offset.svg 
+  845  python3 dist-analysis.py dist ../PathCoverage-NaturalSym/seed/{_gpt,_naturalsym}/Q15/customer_address.csv dist_graphs_ca
+  846  xdg-open dist_graphs_ca/Q15_ca_gmt_offset.svg 
+  847  xdg-open freq_graphs_ca/Q15_ca_gmt_offset.svg 
+  848  ls
+  849  rm strace-*
+  850  ls
+  851  cat wordcount-spark.log 
+  852  ls
+  853  bpftool net list
+  854  sudo bpftool net list
+  855  cd ..
+  856  ls
+  857  cd ..
+  858  ls
+  859  cd bpftool/
+  860  ls
+  861  cd ..
+  862  cd bpf-playground/
+  863  ls
+  864  cd learning-ebpf/
+  865  ls
+  866  sudo bpftool net list 
+  867  code .
+  868  netstat -tln
+  869  sudo apt install net-tools
+  870  netstat -tln
+  871  netstat -tn
+  872  netstat
+  873  netstat -uln
+  874  netstat -tln
+  875  netstat
+  876  netstat | grep 63132
+  877  netstat
+  878  ls
+  879  netstat > netstat.log
+  880  cat netstat.log | grep 1444
+  881  netstat > netstat.log
+  882  cat netstat.log | grep 1444
+  883  cat netstat.log 
+  884  netstat >> netstat.a.log
+  885  cat netstat.a.log | grep 59790
+  886  sudo netstat > netstat.log
+  887  sudo netstat -tln
+  888  watch -n 1 ss -tulpn
+  889  watch -n 0.1 ss -tulpn
+  890  ls
+  891  watch -n 1 ss -tulpn
+  892  jps
+  893  start-master
+  894  start-master.sh 
+  895  jps
+  896  cat /opt/spark/logs/spark-ahmad-org.apache.spark.deploy.master.Master-1-ubuntu.out
+  897  python3 client.py 
+  898  tmux
+  899  wls
+  900  ./xdp-unload.sh; ./xdp-load.sh && sudo bpftool prog show 
+  901  ls
+  902  cd chapter3/spark-ebpf-measure/
+  903  ./xdp-unload.sh; ./xdp-load.sh && sudo bpftool prog show 
+  904  sudo apt install linux-tools-5.15.0-100-generic linux-cloud-tools-5.15.0-100-generic
+  905  ./xdp-unload.sh; ./xdp-load.sh && sudo bpftool prog show 
+  906  sudo bpftool net list
+  907  cat cmds
+  908  ./xdp-spark.user packet_log6.txt 1
+  909  sudo ./xdp-spark.user packet_log6.txt 1
+  910  sudo ./xdp-spark.user packet_log7.txt 1
+  911  cat packet_log6.txt 
+  912  cat packet_log7.txt 
+  913  diff packet_log6.txt packet_log7.tx
+  914  cat packet_log6 | grep 37029 | grep 37457
+  915  cat packet_log6.txt | grep 37029 | grep 37457
+  916  cat packet_log6.txt | grep 37457
+  917  pwd
+  918  sudo bpftool net list
+  919  ./show-trace.sh 
+  920  sudo ./xdp-spark.user packet_log_python.txt 1
+  921  cat packet_log_python.txt 
+  922  cd ..
+  923  ./show-trace.sh 
+  924  cd /home/ahmad/Desktop/bpf-playground/learning-ebpf/chapter3/spark-ebpf-measure
+  925  cd sandbox/
+  926  python3 server.py 
+  927  sudo bpftool net list
+  928  sudo ./xdp-spark.user packet_log_python.txt 1
+  929  #sudo ./xdp-spar packet_log_python.txt 1
+  930  cd chapter3/
+  931  cd spark-ebpf-measure/
+  932  sudo ./xdp-spark.user packet_log_python.txt 1
+  933  cat packet_log_python.txt 
+  934  ./xdp-unload.sh; ./xdp-load.sh && sudo bpftool prog show 
+  935  sudo ./xdp-spark.user packet_log_python2.txt 2
+  936  cat packet_log_python2.txt 
+  937  python3 sock-ingress.py 
+  938  sudo python3 sock-ingress.py 
+  939  rm packet_log*
+  940  rm -fpacket_log*
+  941  rm -f packet_log*
+  942  python3 attach_tcp_recvmsg.py 
+  943  sudo python3 attach_tcp_recvmsg.py 
+  944  ./xdp-unload.sh; # ./xdp-load.sh && sudo bpftool prog show 
+  945  sudo python3 attach_tcp_recvmsg.py 
+  946  clang -target bpf -I/usr/include/x86_64-linux-gnu -g -O2 -o attach_tcp_recvmsg.o -c attach_tcp_recvmsg.c
+  947  clang -target bpf -lsocket -I/usr/include/x86_64-linux-gnu -g -O2 -o attach_tcp_recvmsg.o -c attach_tcp_recvmsg.c
+  948  clang -target bpf -I/usr/include/x86_64-linux-gnu -g -O2 -o attach_tcp_recvmsg.o -c attach_tcp_recvmsg.c
+  949  sudo python3 attach_tcp_recvmsg.py 
+  950  sudo python3 attach_tcp_recvmsg.py  | grep error
+  951  sudo python3 attach_tcp_recvmsg.py 2>&1 | grep error
+  952  sudo python3 attach_tcp_recvmsg.py
+  953  sudo python3 attach_tcp_recvmsg.py 2>&1 | grep error
+  954  python -m pip freeze
+  955  python3 -m pip freeze
+  956  python3 -m pip freeze | grep bcc
+  957  uname -r
+  958  ping google.com
+  959  if config
+  960  ifconfig
+  961  sudo systemctl restart NetworkManager.service
+  962  ping google.com
+  963  python3 -m pip install --upgrade bcc
+  964  lsb_release -r
+  965  lsb_release
+  966  lsb_release -a
+  967  lsb_release -cs
+  968  ls /usr/share/bcc/tools
+  969  sudo ls /usr/share/bcc/tools
+  970  sudo ls /usr/share/bcc
+  971  sudo ls /usr/share/
+  972  python3 -m pip install bpfcc
+  973  sudo apt install python3-bpfcc
+  974  bpflist-bpfcc 
+  975  which bpflist-bpfcc 
+  976  ls /usr/sbin/
+  977  ls /usr/sbin/bp*
+  978  sudo python3 attach_tcp_recvmsg.py 2>&1 | grep error
+  979  sudo python3 attach_tcp_recvmsg.py
+  980  sudo python3 attach_tcp_recvmsg.py 2>&1 | grep error
+  981  sudo python3 attach_tcp_recvmsg.py
+  982  python3 --version
+  983  python --version
+  984  python3 -m pip install bcc
+  985  sudo python3 attach_tcp_recvmsg.py
+  986  python3 -m pip install bpfcc
+  987  sudo python3 attach_tcp_recvmsg.py
+  988  python3 attach_tcp_recvmsg.py
+  989  python3 -m pip install pytest
+  990  python3 attach_tcp_recvmsg.py
+  991  sudo apt install linux-tools-5.15.0-100-generic linux-cloud-tools-5.15.0-100-generic
+  992  python3 -m pip install bcc
+  993  sudo apt install net-tools
+  994  sudo python3 -m pip install bcc
+  995  python3 attach_tcp_recvmsg.py
+  996  sudo python3 attach_tcp_recvmsg.py
+  997  sudo python3 -m pip install pytest
+  998  sudo python3 attach_tcp_recvmsg.py
+  999  sudo apt-get install python3-bcc
+ 1000  sudo python3 -m pip uninstall bcc
+ 1001* sudo apt-get 
+ 1002  sudo python3 -m pip install bcc
+ 1003  sudo python3 attach_tcp_recvmsg.py
+ 1004  sudo python3 -m pip uninstall bcc
+ 1005  sudo apt install python3-bpfcc
+ 1006  sudo apt install libbpfcc python3-bpfcc
+ 1007  sudo apt-get install libbpfcc python3-bpfcc
+ 1008  sudo apt-get install libbpf1 libelf1t64 libbpfcc python3-bpfcc
+ 1009  sudo python3 attach_tcp_recvmsg.py
+ 1010  sudo python3 attach_tcp_recvmsg.py 2>&1 | grep error
+ 1011  sudo python3 attach_tcp_recvmsg.py
+ 1012  history
+ 1013  history | tail -200 | head -1
+ 1014  history | tail -200 >> cmd_dump_fixed_bccsockcompileerror

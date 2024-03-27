@@ -1,0 +1,100 @@
+  869  sudo apt install net-tools
+  870  netstat -tln
+  871  netstat -tn
+  872  netstat
+  873  netstat -uln
+  874  netstat -tln
+  875  netstat
+  876  netstat | grep 63132
+  877  netstat
+  878  ls
+  879  netstat > netstat.log
+  880  cat netstat.log | grep 1444
+  881  netstat > netstat.log
+  882  cat netstat.log | grep 1444
+  883  cat netstat.log 
+  884  netstat >> netstat.a.log
+  885  cat netstat.a.log | grep 59790
+  886  sudo netstat > netstat.log
+  887  sudo netstat -tln
+  888  watch -n 1 ss -tulpn
+  889  watch -n 0.1 ss -tulpn
+  890  ls
+  891  watch -n 1 ss -tulpn
+  892  jps
+  893  start-master
+  894  start-master.sh 
+  895  jps
+  896  cat /opt/spark/logs/spark-ahmad-org.apache.spark.deploy.master.Master-1-ubuntu.out
+  897  python3 client.py 
+  898  tmux
+  899  wls
+  900  ./xdp-unload.sh; ./xdp-load.sh && sudo bpftool prog show 
+  901  ls
+  902  cd chapter3/spark-ebpf-measure/
+  903  ./xdp-unload.sh; ./xdp-load.sh && sudo bpftool prog show 
+  904  sudo apt install linux-tools-5.15.0-100-generic linux-cloud-tools-5.15.0-100-generic
+  905  ./xdp-unload.sh; ./xdp-load.sh && sudo bpftool prog show 
+  906  sudo bpftool net list
+  907  cat cmds
+  908  ./xdp-spark.user packet_log6.txt 1
+  909  sudo ./xdp-spark.user packet_log6.txt 1
+  910  sudo ./xdp-spark.user packet_log7.txt 1
+  911  cat packet_log6.txt 
+  912  cat packet_log7.txt 
+  913  diff packet_log6.txt packet_log7.tx
+  914  cat packet_log6 | grep 37029 | grep 37457
+  915  cat packet_log6.txt | grep 37029 | grep 37457
+  916  cat packet_log6.txt | grep 37457
+  917  pwd
+  918  sudo bpftool net list
+  919  ./show-trace.sh 
+  920  sudo ./xdp-spark.user packet_log_python.txt 1
+  921  cat packet_log_python.txt 
+  922  cd ..
+  923  ./show-trace.sh 
+  924  cd /home/ahmad/Desktop/bpf-playground/learning-ebpf/chapter3/spark-ebpf-measure
+  925  cd sandbox/
+  926  python3 server.py 
+  927  sudo apt install linux-headers-$(uname -r)
+  928  sudo apt-get install bpfcc-tools linux-headers-$(uname -r)
+  929  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4052245BD4284CDD
+  930  echo "deb https://repo.iovisor.org/apt/$(lsb_release -cs) $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/iovisor.list
+  931  sudo apt-get update
+  932  sudo rm /etc/apt/sources.list.d/iovisor.list
+  933  sudo apt-get update
+  934  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4052245BD4284CDD
+  935  echo "deb https://repo.iovisor.org/apt/$(lsb_release -cs) $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/iovisor.list
+  936  sudo apt-get update
+  937  sudo apt-get install bcc-tools libbcc-examples linux-headers-$(uname -r)
+  938  sudo apt-get update
+  939  sudo rm /etc/apt/sources.list.d/iovisor.list
+  940  sudo apt-get update
+  941  sudo apt-get install bpfcc-tools
+  942  which opensnoop-bpfcc 
+  943  echo deb http://cloudfront.debian.net/debian sid main >> /etc/apt/sources.list
+  944  sudo echo deb http://cloudfront.debian.net/debian sid main >> /etc/apt/sources.list
+  945  echo deb http://cloudfront.debian.net/debian sid main | sudo tee -a /etc/apt/sources.list
+  946  cat /etc/apt/sources.list
+  947  sudo apt-get install -y bpfcc-tools libbpfcc libbpfcc-dev 
+  948  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4052245BD4284CDD
+  949  echo $?
+  950  echo "deb https://repo.iovisor.org/apt/$(lsb_release -cs) $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/iovisor.list
+  951  sudo apt-get update
+  952  sudo rm /etc/apt/sources.list.d/iovisor.list
+  953  echo "deb https://repo.iovisor.org/apt/bionic bionic main" | sudo tee /etc/apt/sources.list.d/iovisor.list
+  954  sudo apt-get update
+  955  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
+  956  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6ED0E7B82643E131
+  957  sudo apt-get update
+  958  sudo apt-get install bcc-tools libbcc-examples linux-headers-$(uname -r)
+  959  bpftool --version
+  960  sudo apt-get install python3-bcc
+  961  sudo apt-get remove python3-bcc
+  962  sudo rm /etc/apt/sources.list.d/iovisor.list
+  963  sudo apt-get update
+  964  sudo apt-get install bcc-tools libbcc-examples linux-headers-$(uname -r)
+  965  history
+  966  cd /home/ahmad/Desktop/bpf-playground/learning-ebpf/chapter3/spark-ebpf-measure
+  967  history | tail -100 | head -1
+  968  history | tail -100 >> cmd_dump_fixed_bccsockcompileerror_bash

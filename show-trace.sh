@@ -1,0 +1,1 @@
+sudo cat /sys/kernel/debug/tracing/trace_pipe | tee kernel-trace.log
