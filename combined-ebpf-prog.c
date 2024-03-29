@@ -25,11 +25,18 @@ struct packet_id {
 
 };
 
+struct socket_stats {
+    u64 diff_sum;
+    u64 total_bytes;
+    u64 pkt_count;
+};
+
 
 BPF_HASH(packet_log_map, struct packet_id, struct packet_info, 1024);
-BPF_HASH(diff_sum_map, struct packet_id, u64, 1024);
-BPF_HASH(total_size_map, struct packet_id, u64, 1024);
-BPF_HASH(packet_counts_map, struct packet_id, u64, 1024);
+BPF_HASH(socket_stats_map, struct packet_id, struct socket_stats, 1024);
+// BPF_HASH(diff_sum_map, struct packet_id, u64, 1024);
+// BPF_HASH(total_size_map, struct packet_id, u64, 1024);
+// BPF_HASH(packet_counts_map, struct packet_id, u64, 1024);
 
 
 
@@ -43,8 +50,6 @@ int xdp_main(struct xdp_md *ctx) {
     const int l4_off = l3_off + sizeof(struct iphdr);  // TCP header offset
     struct ethhdr *eth = data;
     unsigned long ts = bpf_ktime_get_ns();
-    // __u64 key = ts; // bpf_get_smp_processor_id(); // Use CPU ID as key for simplicity
-    // __u32 key = (__u32) ts;
     struct packet_info info = {};
     info.timestamp_ns = ts;
 
@@ -85,16 +90,32 @@ int xdp_main(struct xdp_md *ctx) {
     info.src_port = htons(info.src_port);
     info.dest_port = htons(info.dest_port);
     
-    struct packet_id key = {};
-    key.daddr = ip->daddr;
-    key.saddr = ip->saddr;
-    key.dport = info.dest_port;
-    key.sport = info.src_port;
+    struct packet_id id = {};
+    id.daddr = ip->daddr;
+    id.saddr = ip->saddr;
+    id.dport = info.dest_port;
+    id.sport = info.src_port;
+
+    packet_log_map.update(&id, &info);
+
+    // u64* old_count = packet_counts_map.lookup(&id);
+    // u64* old_size = total_size_map.lookup(&id);
+
+    struct socket_stats* old_stats = socket_stats_map.lookup(&id);
+    struct socket_stats new_stats = {0, 1, packet_size};
+    
+    if(old_stats) { 
+        new_stats.diff_sum = old_stats->diff_sum;
+        new_stats.pkt_count = old_stats->pkt_count+1;
+        new_stats.total_bytes = old_stats->total_bytes+packet_size;
+
+    }
+
+    socket_stats_map.update(&id, &new_stats);
 
     // bpf_map_update_elem(&packet_log_map, &key, &info, BPF_ANY);
-    packet_log_map.update(&key, &info);
     // bpf_trace_printk("[xdp] %d -> %d | %lu ns\n", info.src_port, info.dest_port, ts);
-    bpf_trace_printk("[xdp] packet_size = %lu\n", packet_size);
+    // bpf_trace_printk("[xdp] packet_size = %lu\n", packet_size);
     
 
     return XDP_PASS;
@@ -124,32 +145,25 @@ int trace_tcp_recvmsg(struct pt_regs *ctx, struct sock *sk, struct msghdr *msg, 
 
     // bpf_trace_printk("[tcp_recvmsg] %d -> %d | diff: %lu ns\n",pkt_info->src_port, pkt_info->dest_port, ts - pkt_info->timestamp_ns);
     u64 diff = ts - pkt_info->timestamp_ns;
-    u64* old_diff_sum = diff_sum_map.lookup(&id);
-    u64* old_count = packet_counts_map.lookup(&id);
-    u64* old_size = total_size_map.lookup(&id);
 
-    if(old_diff_sum && old_count && old_size) { // these two booleans are linked so should always be T & T or F & F, writing like this will simplify the program 
-        u64 new_diff_sum = *old_diff_sum+diff;
-        u64 new_count = *old_count+1;
-        u64 new_size = *old_size+ (u64)len;
-        diff_sum_map.update(&id, &new_diff_sum);
-        packet_counts_map.update(&id, &new_count);
-        total_size_map.update(&id, &new_size);
+    struct socket_stats* old_stats = socket_stats_map.lookup(&id);
+    struct socket_stats new_stats = {};
+
+    if(old_stats) { // all these booleans are linked so should always be T & T or F & F, writing like this will simplify the program 
+        u64 new_diff_sum = old_stats->diff_sum + diff;
+        new_stats.diff_sum = new_diff_sum;
+        new_stats.pkt_count = old_stats->pkt_count;
+        new_stats.total_bytes = old_stats->total_bytes;
     } else {
-        u64 zero = 0;
-        u64 one = 1;
-        diff_sum_map.insert(&id, &diff);
-        packet_counts_map.update(&id, &one);
-        total_size_map.update(&id, &zero);
+        bpf_trace_printk("[tcp_recvmsg] socket_stats_map[%u -> %u] doesn't exist\n", id.sport, id.dport);
     }
-
 
     // u64* num = diff_sum_map.lookup(&id);
     // u64* den = packet_counts_map.lookup(&id);
     // if(!num || !den)
     //     return 0;
 
-    u64 encoded_ports = (u64)id.sport * 100000 + id.dport;
+    // u64 encoded_ports = (u64)id.sport * 100000 + id.dport;
     // bpf_trace_printk("[tcp_recvmsg] len = %u bytes\n", len);
     // bpf_trace_printk("[tcp_recvmsg] diff[%u -> %u] = %lu ns\n", id.sport, id.dport, *num);
     // bpf_trace_printk("[tcp_recvmsg] avg_diff[%llu] = %llu/%llu ns\n", encoded_ports, *num, *den);
