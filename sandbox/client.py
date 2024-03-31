@@ -8,15 +8,15 @@ def client_program():
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server
 
-    message = "hello world"  # take input
+    message = "hello from client!!"  # take input
     while message.lower().strip() != 'bye':
         time.sleep(1)
         client_socket.send(message.encode())  # send message
-        data = client_socket.recv(1024).decode()  # receive response
+        data = client_socket.recv(512).decode()  # receive response
 
         print(f'[From server {host}:{port}] ' + data)  # show in terminal
 
-        message = "hello world"  # again take input
+        message = "hello from client!!"  # again take input
 
     client_socket.close()  # close the connection
 

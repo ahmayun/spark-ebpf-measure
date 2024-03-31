@@ -20,6 +20,7 @@ struct socket_stats {
     __u64 diff_sum;
     __u64 total_bytes;
     __u64 pkt_count;
+    __u64 pid_of_rcvr;
 };
 
 
@@ -57,8 +58,8 @@ int main(int argc, char **argv) {
             }
 
             printf( 
-                "{%s->%s, %u->%u} = {%llu, %llu, %llu}\n", 
-                saddr_str, daddr_str, next_key.sport, next_key.dport, stats.diff_sum, stats.pkt_count, stats.total_bytes
+                "{%s->%s, %u->%u} = {%llu, %llu, %llu, %llu}\n", 
+                saddr_str, daddr_str, next_key.sport, next_key.dport, stats.diff_sum, stats.pkt_count, stats.total_bytes, stats.pid_of_rcvr
             );
         }
         key = next_key;

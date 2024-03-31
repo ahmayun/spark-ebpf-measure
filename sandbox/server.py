@@ -19,7 +19,7 @@ def server_program():
             # if data is not received break
             break
         print(f"[From user {address[0]}:{address[1]}] " + str(data))
-        data = 'hello world'
+        data = 'hello from server!'
         time.sleep(1)
         conn.send(data.encode())  # send data to the client
 
