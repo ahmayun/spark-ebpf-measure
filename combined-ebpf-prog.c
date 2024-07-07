@@ -25,10 +25,10 @@ struct packet_id {
 };
 
 struct socket_stats {
-    u64 diff_sum;
-    u64 total_bytes;
-    u64 pkt_count;
-    u64 pid_of_rcvr; // making this u32 fails the verifier, maybe due to alignment constraints? idk yet
+    __u64 diff_sum;
+    __u64 total_bytes;
+    __u64 pkt_count;
+    __u64 pid_of_rcvr; // making this u32 fails the verifier, maybe due to alignment constraints? idk yet
 };
 
 
@@ -102,7 +102,7 @@ int xdp_main(struct xdp_md *ctx) {
     // u64* old_size = total_size_map.lookup(&id);
 
     struct socket_stats* old_stats = socket_stats_map.lookup(&id);
-    struct socket_stats new_stats = {0, 1, packet_size, -1};
+    struct socket_stats new_stats = {0, 1, packet_size, 0};
     
     if(old_stats) { 
         new_stats.diff_sum = old_stats->diff_sum;
@@ -125,7 +125,7 @@ int xdp_main(struct xdp_md *ctx) {
 int trace_tcp_recvmsg(struct pt_regs *ctx, struct sock *sk, struct msghdr *msg, size_t len) {
     struct packet_id id = {};
     unsigned long ts = bpf_ktime_get_ns();
-    u32 pid = bpf_get_current_pid_tgid() >> 32;
+    __u64 pid = bpf_get_current_pid_tgid() >> 32;
 
     //Casting `sock` to `inet_sock` to access IP and port information
     struct inet_sock *inet = inet_sk(sk);
@@ -150,13 +150,13 @@ int trace_tcp_recvmsg(struct pt_regs *ctx, struct sock *sk, struct msghdr *msg, 
         return 0;
 
     // bpf_trace_printk("[tcp_recvmsg] %d -> %d | diff: %lu ns\n",pkt_info->src_port, pkt_info->dest_port, ts - pkt_info->timestamp_ns);
-    u64 diff = ts - pkt_info->timestamp_ns;
+    __u64 diff = ts - pkt_info->timestamp_ns;
 
     struct socket_stats* old_stats = socket_stats_map.lookup(&id);
     struct socket_stats new_stats = {};
 
     if(old_stats) { // all these booleans are linked so should always be T & T or F & F, writing like this will simplify the program 
-        u64 new_diff_sum = old_stats->diff_sum + diff;
+        __u64 new_diff_sum = old_stats->diff_sum + diff;
         new_stats.diff_sum = new_diff_sum;
         new_stats.pkt_count = old_stats->pkt_count;
         new_stats.total_bytes = old_stats->total_bytes;

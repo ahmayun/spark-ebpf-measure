@@ -19,9 +19,9 @@ PORT_LABELS = {
 }
 
 PID_LABELS = {
-    '228559': 'Master',
-    '228830': 'Worker1',
-    '228764': 'Worker2',
+    '2590793': 'Master',
+    '2590955': 'Worker1',
+    '2591026': 'Worker2',
 }
 
 
@@ -40,21 +40,30 @@ def draw_directional_graph(file_content):
     for line in lines:
         if not line.startswith("{"):
             continue
+
         # Extract src_port, dst_port, pkt_count, and total_bytes
         parts = line.split(' ')
         dst_port = parts[1].split('->')[1][:-1]
         pid = parts[6][:-1]
+        print(f"Extracted PID: {pid}")
         port_to_pid_map[dst_port] = pid
+
+        # If we don't have a label for the pid, get it from port information
         if pid not in PID_LABELS:
             if dst_port in PORT_LABELS:
-                if 'RpcEndpoint' in PORT_LABELS[dst_port]:
-                    PID_LABELS[pid] = PORT_LABELS[dst_port]
-                if 'ShuffleService' in PORT_LABELS[dst_port]:
-                    PID_LABELS[pid] = PORT_LABELS[dst_port]
+                PID_LABELS[pid] = PORT_LABELS[dst_port]
+        # else:
+        #     if dst_port in PORT_LABELS:
+        #         PID_LABELS[pid] += f'||{PORT_LABELS[dst_port]}'
+
+                # if 'RpcEndpoint' in PORT_LABELS[dst_port]:
+                    # PID_LABELS[pid] = PORT_LABELS[dst_port]
+                # if 'ShuffleService' in PORT_LABELS[dst_port]:
+                    # PID_LABELS[pid] = PORT_LABELS[dst_port]
                     
 
         # print(src_port, dst_port, pkt_count, total_bytes)
-    print('port_to_pid_map', port_to_pid_map)
+    print(f'Port to PID: {port_to_pid_map}')
 
     for line in lines:
         if not line.startswith("{"):
@@ -172,7 +181,7 @@ def print_port_info(log_file):
         filtered_lines = list(filter(lambda l: 'NettyRpcEndpointRef' in l and 'CoarseGrainedSchedulerBackend' in l, lines))
         matches = re.findall(r'\d+:(\d+)\)', "\n".join(filtered_lines))
         extracted_ports = [port for port in matches]
-        add_to_port_dict('RpcEndpointRef', extracted_ports)
+        add_to_port_dict('CGSB:RpcEndpointRef', extracted_ports)
         return extracted_ports
 
     driver_port = get_driver_port(log_lines) # filter for sparkDriver
@@ -184,8 +193,8 @@ def print_port_info(log_file):
     # print(f'Workers: {worker_ports}')
     print(f'Executors: {executor_ports}')
     print(f'Shuffle Service: {shuffle_service_ports}')
-    print(f'ExecutorNettyRpc: {nettyrpc_ports}')
-    print(PORT_LABELS)
+    print(f'CGSB: {nettyrpc_ports}')
+    print(f'Port Labels: {PORT_LABELS}')
 
 
 

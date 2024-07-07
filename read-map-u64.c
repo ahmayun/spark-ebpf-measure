@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    printf("format: {src_ip->dst_ip, src_port->dst_port} = {diff_sum, pkt_count, total_bytes}\n"); 
+    printf("format: {src_ip->dst_ip, src_port->dst_port} = {diff_sum, pkt_count, total_bytes, pid}\n"); 
 
     char daddr_str[INET_ADDRSTRLEN];
     char saddr_str[INET_ADDRSTRLEN];

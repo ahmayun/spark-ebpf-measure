@@ -1,0 +1,10 @@
+How to run the measurement script for each TPCDS program:
+
+./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q1 1 store_returns date_dim store customer
+./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q3 1 store_sales date_dim item
+./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q6 1 customer_address customer store_sales date_dim item
+./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q7 1 customer_demographics promotion store_sales date_dim item
+./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q12 1 web_sales date_dim item
+./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q15 1 catalog_sales customer customer_address date_dim
+./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q19 1 date_dim store_sales item customer customer_address store
+./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q20 1 catalog_sales date_dim item

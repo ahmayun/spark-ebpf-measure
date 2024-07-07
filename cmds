@@ -1,1 +1,2 @@
 gcc -o xdp-spark.user xdp-spark.user.c -l bpf
+jps | grep -i coarse | head -1  | cut -d' ' -f1 | sed 's/^/-fp /g' | xargs sudo strace -e 'trace=!futex' 2>&1 | tee strace-log-cgsb1.log
