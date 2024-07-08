@@ -11,9 +11,12 @@ OUTFILE="./results/$PROGRAM/results_$TIMESTAMP/time.csv"
 OUTDIR=$(dirname $OUTFILE)
 OUTDIR_STDOUT=$OUTDIR/stdout
 OUTDIR_STDERR=$OUTDIR/stderr
+GLOBAL_CSV=./results/combined/all-data.csv
 mkdir -p $OUTDIR &> /dev/null
 mkdir -p $OUTDIR_STDOUT &> /dev/null
 mkdir -p $OUTDIR_STDERR &> /dev/null
+mkdir -p $(dirname $GLOBAL_CSV) &> /dev/null
+cp $GLOBAL_CSV "$GLOBAL_CSV"_$TIMESTAMP 
 PFX="[measure-kernel-stack-time.sh] "
 SOCKET_STATS_FILE="/tmp/socket_stats"
 
@@ -43,9 +46,15 @@ exit_with_force(){
     exit 1
 }
 
+get_app_id_from_logs() {
+    logfile=$1
+    egrep -o "app-[0-9]{14}-[0-9]{4}" $logfile | head -1
+}
+
 trap exit_with_force SIGINT
 
-echo -e "DATASET,TOTAL_JOB_TIME,TOTAL_DIFF_SUM" > $OUTFILE
+echo -e "PROGRAM,DATASETS,TOTAL_JOB_TIME,TOTAL_DIFF_SUM" > $OUTFILE
+echo -e "PROGRAM,DATASETS,TOTAL_JOB_TIME,TOTAL_DIFF_SUM" > $GLOBAL_CSV
 
 # Ensure we have the latest version of the map reader
 debuglog "Compiling map reader..."
@@ -76,22 +85,28 @@ for (( i=0; i < $NUM_REPS; i+=1 )); do
     debuglog "Got $BPF_MAP_ID"
     debuglog "Running $PROGRAM with datasets $DS_STR..."
 
+    # ====== Run and time the spark job =======
+    STDERR=$OUTDIR_STDERR/run.$i.err
+    STDOUT=$OUTDIR_STDOUT/run.$i.out
     START_TIME=$(date +%s)
-    spark-submit --class examples.benchmarks.$PROGRAM --master $SPARK_MASTER $JAR $DS_STR 2> $OUTDIR_STDERR/run.$i.err 1>$OUTDIR_STDOUT/run.$i.out
+    spark-submit --class examples.benchmarks.$PROGRAM --master $SPARK_MASTER $JAR $DS_STR 2> $STDERR 1>$STDOUT
+    
     if [ $? -ne 0 ]; then
         exit_with_failure
     fi
     
     END_TIME=$(date +%s)
     TOTAL_JOB_TIME=$((END_TIME - START_TIME))
+    # =========================================
 
     debuglog "Spark job took $TOTAL_JOB_TIME seconds"
     debuglog "Writing eBPF-collected socket info to $SOCKET_STATS_FILE"
     sudo ./read-map-u64 $BPF_MAP_ID > $SOCKET_STATS_FILE
     TOTAL_DIFF_SUM=$(python3 analyze-packet-time.py $SOCKET_STATS_FILE)
-    ROW="$DS_STR,$TOTAL_JOB_TIME,$TOTAL_DIFF_SUM"
+    ROW="$PROGRAM,$DS_STR,$TOTAL_JOB_TIME,$TOTAL_DIFF_SUM,$SHFL_RD,$SHFL_WR"
     debuglog "Recorded: $ROW"
     echo "$ROW" >> $OUTFILE
+    echo "$ROW" >> $GLOBAL_CSV
 
     cleanup
 done

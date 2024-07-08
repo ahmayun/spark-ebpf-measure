@@ -8,3 +8,10 @@ How to run the measurement script for each TPCDS program:
 ./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q15 1 catalog_sales customer customer_address date_dim
 ./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q19 1 date_dim store_sales item customer customer_address store
 ./measurement-scripts/convenience-wrapper-kernel-stack-time.sh Q20 1 catalog_sales date_dim item
+
+Copied these commands into measurement-scripts/run-all.sh
+
+Activated history server.
+Need to get shuffle read and write values from the history server
+Can't do the above automatically since too complex for what it is worth, do manually for now.
+Created script to plot shuffle size vs diff sum in measurement scripts
