@@ -4,4 +4,4 @@ results/
 analyze-packet-time.py
 *.data
 permutations
-spark-logs-for-graphs/
+spark-logs-for-graphs/venv/

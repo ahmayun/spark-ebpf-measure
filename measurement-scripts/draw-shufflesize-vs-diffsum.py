@@ -2,7 +2,7 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def process_data(file_path, mode):
+def process_data(file_path, mode, program_filter='Q3'):
     # Read the CSV file
     df = pd.read_csv(file_path)
 
@@ -10,8 +10,20 @@ def process_data(file_path, mode):
     df['SHUFFLE_READ'] = df['SHUFFLE_READ'].apply(lambda x: convert_size(x))
     df['SHUFFLE_WRITE'] = df['SHUFFLE_WRITE'].apply(lambda x: convert_size(x))
 
+    # Split the 'ID' column
+    split_columns = df['ID'].str.split('_', expand=True)
+    print(split_columns)
+    split_columns.columns = ['PROGRAM', 'LEVEL', 'RUN']
+
+    # Combine with the original data
+    new_df = pd.concat([split_columns, df.drop(columns=['ID'])], axis=1)
+
+    filtered_df = new_df[new_df['PROGRAM'] == program_filter]
+
+    print(filtered_df)
+
     # Compute average values by PROGRAM
-    df_avg = df.groupby('PROGRAM').agg({
+    df_avg = filtered_df.groupby('LEVEL').agg({
         'TOTAL_JOB_TIME': 'mean',
         'TOTAL_DIFF_SUM': 'mean',
         'SHUFFLE_READ': 'mean',
@@ -33,18 +45,18 @@ def process_data(file_path, mode):
     plt.figure(figsize=(10, 6))
     plt.plot(df_avg[shuffle_col], df_avg['PERCENTAGE_TIME'], marker='o')
     for i, row in df_avg.iterrows():
-        plt.annotate(row['PROGRAM'], (row[shuffle_col], row['PERCENTAGE_TIME']))
+        plt.annotate(row['LEVEL'], (row[shuffle_col], row['PERCENTAGE_TIME']))
     
     
     plt.xlabel(f'Shuffle {mode.capitalize()} Size (bytes)')
     plt.ylabel('Percentage Time (%)')
-    plt.title(f'Shuffle {mode.capitalize()} Size vs Percentage Time')
+    plt.title(f'{program_filter}: Shuffle {mode.capitalize()} Size vs Percentage Time')
     plt.grid(True)
+    plt.savefig(f'/home/ahmad/Desktop/bpf-playground/learning-ebpf/chapter3/spark-ebpf-measure/figures/{mode}_{program_filter}')
     plt.show()
 
 def convert_size(size_str):
     size_str = size_str.strip().upper()
-    print(size_str)
     if 'GIB' in size_str:
         return float(size_str.replace('GIB', '').strip()) * (1024 ** 3)
     elif 'MIB' in size_str:
@@ -57,15 +69,16 @@ def convert_size(size_str):
         raise RuntimeError(f"Unrecognized size {size_str}")
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("Usage: script.py <path/to/csv> <read|write>")
+    if len(sys.argv) != 4:
+        print("Usage: script.py <path/to/csv> <program> <read|write>")
         sys.exit(1)
 
     file_path = sys.argv[1]
-    mode = sys.argv[2].lower()
+    program_filter = sys.argv[2]
+    mode = sys.argv[3].lower()
 
     if mode not in ['read', 'write']:
         print("Second argument must be 'read' or 'write'")
         sys.exit(1)
 
-    process_data(file_path, mode)
+    process_data(file_path, mode, program_filter)

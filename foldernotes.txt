@@ -15,3 +15,22 @@ Activated history server.
 Need to get shuffle read and write values from the history server
 Can't do the above automatically since too complex for what it is worth, do manually for now.
 Created script to plot shuffle size vs diff sum in measurement scripts
+
+create_ds_levels.py will create datasets of different sizes given a path to a folder with a bunch of datasets
+first arg is path to folder containing datasets (partitioned spark style)
+second arg is any arbitrary path, this is where the new ones will be stored
+Example run:
+python3 create_ds_levels.py /home/ahmad/Desktop/spark-playground/DepFuzz/data/tpcds_noheader_nocommas /home/ahmad/Desktop/spark-playground/DepFuzz/data/tpcds_levels
+
+
+Getting results:
+Run the following script.
+.measurement-scripts/run-all.sh
+
+The combined results are written to results/global_logs/
+
+Need to get shuffle read and write sizes manually from the history server
+clean up the file
+
+Get graphs for a particular program using the following:
+python3 measurement-scripts/draw-shufflesize-vs-diffsum.py results/global_logs/cleaned-gl-2024-07-13_01-20-06 Q1 read

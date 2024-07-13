@@ -1,13 +1,14 @@
 # assumes run-wordcount.sh
 JAR=$1
-PROGRAM=$2
-NUM_REPS=$3
-shift 3
+LABEL=$2
+PROGRAM=$3
+NUM_REPS=$4
+shift 4
 DATASETS=("$@")
 NUM_DS=${#DATASETS[@]}
 SPARK_MASTER=spark://localhost:7077
 TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
-OUTFILE="./results/$PROGRAM/results_$TIMESTAMP/time.csv"
+OUTFILE="./results/$PROGRAM/$LABEL/results_$TIMESTAMP/time.csv"
 OUTDIR=$(dirname $OUTFILE)
 OUTDIR_STDOUT=$OUTDIR/stdout
 OUTDIR_STDERR=$OUTDIR/stderr
@@ -53,8 +54,9 @@ get_app_id_from_logs() {
 
 trap exit_with_force SIGINT
 
-echo -e "PROGRAM,DATASETS,TOTAL_JOB_TIME,TOTAL_DIFF_SUM" > $OUTFILE
-echo -e "PROGRAM,DATASETS,TOTAL_JOB_TIME,TOTAL_DIFF_SUM" > $GLOBAL_CSV
+echo -e "ID,TOTAL_JOB_TIME,TOTAL_DIFF_SUM" > $OUTFILE
+echo -e "ID,TOTAL_JOB_TIME,TOTAL_DIFF_SUM" > $GLOBAL_CSV
+echo -e "ID,TOTAL_JOB_TIME,TOTAL_DIFF_SUM" >> $GLOBAL_LOG_FILE
 
 # Ensure we have the latest version of the map reader
 debuglog "Compiling map reader..."
@@ -89,7 +91,8 @@ for (( i=0; i < $NUM_REPS; i+=1 )); do
     STDERR=$OUTDIR_STDERR/run.$i.err
     STDOUT=$OUTDIR_STDOUT/run.$i.out
     START_TIME=$(date +%s)
-    spark-submit --class examples.benchmarks.$PROGRAM --master $SPARK_MASTER $JAR $DS_STR 2> $STDERR 1>$STDOUT
+    JOB_NAME="$PROGRAM"_"$LABEL"_"$i"
+    spark-submit --name $JOB_NAME --class examples.benchmarks.$PROGRAM --master $SPARK_MASTER $JAR $DS_STR 2> $STDERR 1>$STDOUT
     
     if [ $? -ne 0 ]; then
         exit_with_failure
@@ -103,10 +106,11 @@ for (( i=0; i < $NUM_REPS; i+=1 )); do
     debuglog "Writing eBPF-collected socket info to $SOCKET_STATS_FILE"
     sudo ./read-map-u64 $BPF_MAP_ID > $SOCKET_STATS_FILE
     TOTAL_DIFF_SUM=$(python3 analyze-packet-time.py $SOCKET_STATS_FILE)
-    ROW="$PROGRAM,$DS_STR,$TOTAL_JOB_TIME,$TOTAL_DIFF_SUM,$SHFL_RD,$SHFL_WR"
+    ROW="$JOB_NAME,$TOTAL_JOB_TIME,$TOTAL_DIFF_SUM"
     debuglog "Recorded: $ROW"
     echo "$ROW" >> $OUTFILE
     echo "$ROW" >> $GLOBAL_CSV
+    echo "$ROW" >> $GLOBAL_LOG_FILE
 
     cleanup
 done
